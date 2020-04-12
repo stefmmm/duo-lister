@@ -2,18 +2,25 @@
 from urllib import request
 import json
 import os
+from config import *
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
 def main():
+
     Input = input('User: ')
     Request = request.urlopen(f'https://www.duolingo.com/2017-06-30/users?username={Input}')
     Json = json.loads(Request.read().decode('utf-8'))
 
-    username = Json['users'][0]['username']
-    realname = Json['users'][0]['name']
-    picture = Json['users'][0]['picture']
+    if len(Json['users']) == 0:
+        return print('User Not Found')
 
+    realname = 'Unknown'
+    if 'name' in Json['users'][0]:
+        realname = Json['users'][0]['name']
+
+    username = Json['users'][0]['username']
+    picture = Json['users'][0]['picture']
     motivation = Json['users'][0]['motivation']
     streak = Json['users'][0]['_achievements'][0]['count']
     totalxp = Json['users'][0]['totalXp']
@@ -72,6 +79,10 @@ def main():
         thelang = 'Greek'
     if lastlang == 'sw':
         thelang = 'Swahili'
+    if lastlang == 'vi':
+        lastlang = 'Vietnamese'
+    else:
+        thelang = 'Not Found'
 
 
     os.system('cls')
@@ -88,9 +99,9 @@ def main():
     print('Streak:', streak,'days')
     print('Total XP:', totalxp)
     print('Current Language:', lastlang)
-    print('--- Languages ---')
+    print('------------------')
 
-    webhook = DiscordWebhook(url='YOUR WEBHOOK URL', username="Duolingo", avatar_url="https://www.underconsideration.com/brandnew/archives/duolingo_2018_logo_social.png")
+    webhook = DiscordWebhook(url=f'https://discordapp.com/api/webhooks/{webhook_id}/{webhook_secret}', username=webhooker_name, avatar_url=webhooker_avatar_url)
 
     embed = DiscordEmbed(title='Duolingo Profile', description=f'**User:** {username}\n**Name:** {realname}\n \n**Has Plus**: {duoplus}\n**Recently active:** {wasactive}\n**Linked Google:** {googleac}\n**Linked Facebook:** {facebookac}\n**Verified Email:** {veryemail}\n**Motivation:** {motivation}\n \n**Current Language:** {thelang}', url=f'https://www.duolingo.com/profile/{username}', color=4714574)
     embed.set_author(name=f'{username}',
@@ -102,7 +113,31 @@ def main():
 
     webhook.add_embed(embed)
     response = webhook.execute()
-    print(response)
+    print('Hook1', response)
+    secondswebhook(Input, picture)
+
+
+def secondswebhook(username, picture):
+
+        Embed = DiscordEmbed(title='Language Stats', color=4714574)
+        Webhook = DiscordWebhook(url='https://discordapp.com/api/webhooks/698227047771799581/52Y0QFNzfukPwXMnsaMfZNLJuhmceoP24SAejtPVavtd42y2ax5WuCfk0CmijBMnog5Q', username="Duo", avatar_url="https://www.underconsideration.com/brandnew/archives/duolingo_2018_logo_social.png")
+
+        Request = request.urlopen(f'https://www.duolingo.com/2017-06-30/users?username={username}')
+        Json = json.loads(Request.read().decode('utf-8'))
+
+        Embed.set_author(name=f'{username}',
+                         icon_url=f'https:{picture}/xlarge')
+
+
+        for langs in Json['users'][0]['courses']:
+            if langs['title']:
+                Embed.add_embed_field(name=langs['title'],
+                                      value=f"XP: {langs['xp']}\nCrowns: {langs['crowns']}")
+
+        Webhook.add_embed(Embed)
+        response = Webhook.execute()
+        print('Hook2', response)
+
 
 if __name__ == "__main__":
     main()
