@@ -4,8 +4,8 @@ With the power of webhooks!
 
 #### How it works:
 
-1. Edit app.py
-1. Change 'YOUR WEBHOOK URL' to well.. your webhook url.
+1. Edit config.py
+1. Change 'YOUR WEBHOOK ID' and 'YOUR WEBHOOK SECRET' this info can be found in the webhook url.
 1. Save file.
 1. Run app.py in cmd or powershell
 1. Enter a username.
