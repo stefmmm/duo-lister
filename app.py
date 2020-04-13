@@ -13,6 +13,11 @@ def main():
     Request = request.urlopen(f'https://www.duolingo.com/2017-06-30/users?username={Input}')
     Json = json.loads(Request.read().decode('utf-8'))
 
+    # Version Number, Do not change
+    ver = 1.6
+    # Release candidate, Do not change
+    rl = 1
+
     if len(Json['users']) == 0:
         return print('User Not Found')
 
@@ -84,7 +89,7 @@ def main():
     if lastlang == 'sw':
         thelang = 'Swahili'
     if lastlang == 'vi':
-        lastlang = 'Vietnamese'
+        thelang = 'Vietnamese'
 
 
     os.system('cls')
@@ -109,7 +114,7 @@ def main():
     embed = DiscordEmbed(title='Duolingo Profile', description=f'**User:** {username}\n**Name:** {realname}\n \n**Duolingo Plus**: {duoplus}\n**Recently active:** {wasactive}\n**Linked Google:** {googleac}\n**Linked Facebook:** {facebookac}\n**Verified Email:** {veryemail}\n**Motivation:** {motivation}\n \n**Current Language:** {thelang}\n\n**Account created:** {date_created}', url=f'https://www.duolingo.com/profile/{username}', color=4714574)
     embed.set_author(name=f'{username}',
                      icon_url=f'https:{picture}/xlarge')
-    embed.set_footer(text='Powered by: Liquid Kartofler')
+    embed.set_footer(text=f'Duo-Kartoffel v{ver} RC: {rl}')
     embed.set_timestamp()
     embed.add_embed_field(name='Total XP', value=f'{totalxp}')
     embed.add_embed_field(name='Streak', value=f'{streak} Days', inline='true')
