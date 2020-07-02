@@ -14,9 +14,7 @@ def main():
     Json = json.loads(Request.read().decode('utf-8'))
 
     # Version Number, Do not change
-    ver = 1.6
-    # Release candidate, Do not change
-    rl = 1
+    ver = '1.7.1'
 
     if len(Json['users']) == 0:
         return print('User Not Found')
@@ -30,8 +28,9 @@ def main():
     motivation = Json['users'][0]['motivation']
     streak = Json['users'][0]['_achievements'][0]['count']
     totalxp = Json['users'][0]['totalXp']
-    lastlang = Json['users'][0]['learningLanguage']
+    langfromjson = Json['users'][0]['learningLanguage']
     date = Json['users'][0]['creationDate']
+    userid = Json['users'][0]['id']
 
     date_created = datetime.fromtimestamp(date)
 
@@ -60,39 +59,29 @@ def main():
     else:
         veryemail = 'No'
 
-    if lastlang == 'de':
-        thelang = 'German'
-    if lastlang == 'nl-NL':
-        thelang = 'Dutch'
-    if lastlang == 'la':
-        thelang = 'Latin'
-    if lastlang == 'ga':
-        thelang = 'Irish'
-    if lastlang == 'ja':
-        thelang = 'Japanese'
-    if lastlang == 'ru':
-        thelang = 'Russian'
-    if lastlang == 'pt':
-        thelang = 'Portuguese'
-    if lastlang == 'fr':
-        thelang = 'French'
-    if lastlang == 'it':
-        thelang = 'Italian'
-    if lastlang == 'en':
-        thelang = 'English'
-    if lastlang == 'es':
-        thelang = 'Spanish'
-    if lastlang == 'cy':
-        thelang = 'Welsh'
-    if lastlang == 'el':
-        thelang = 'Greek'
-    if lastlang == 'sw':
-        thelang = 'Swahili'
-    if lastlang == 'vi':
-        thelang = 'Vietnamese'
-
+    languages = {
+        'de': 'German',
+        'nl-NL': 'Dutch',
+        'la': 'Latin',
+        'ga': 'Irish',
+        'ja': 'Japanese',
+        'ru': 'Russian',
+        'pt': 'Portuguese',
+        'fr': 'French',
+        'it': 'Italian',
+        'en': 'English',
+        'es': 'Spanish',
+        'cy': 'Welsh',
+        'el': 'Greek',
+        'sw': 'Swahili',
+        'vi': 'Vietnamese'
+    }
+    outputlang = languages.get(langfromjson, "Unknown")
+    print(outputlang)
 
     os.system('cls')
+    print('====DEBUG OUTPUT====')
+    print('User ID:', userid)
     print('Username: ' + username)
     print('Real Name: ' + realname)
     print("------------------")
@@ -106,15 +95,16 @@ def main():
     print('Motivation:', motivation)
     print('Streak:', streak,'days')
     print('Total XP:', totalxp)
-    print('Current Language:', lastlang)
+    print('Lang Code:', langfromjson)
+    print('Current Language:', outputlang)
     print('------------------')
 
     webhook = DiscordWebhook(url=f'https://discordapp.com/api/webhooks/{webhook_id}/{webhook_secret}', username=webhooker_name, avatar_url=webhooker_avatar_url)
 
-    embed = DiscordEmbed(title='Duolingo Profile', description=f'**User:** {username}\n**Name:** {realname}\n \n**Duolingo Plus**: {duoplus}\n**Recently active:** {wasactive}\n**Linked Google:** {googleac}\n**Linked Facebook:** {facebookac}\n**Verified Email:** {veryemail}\n**Motivation:** {motivation}\n \n**Current Language:** {thelang}\n\n**Account created:** {date_created}', url=f'https://www.duolingo.com/profile/{username}', color=4714574)
+    embed = DiscordEmbed(title='Duolingo Profile', description=f'**User:** {username}\n**Name:** {realname}\n \n**Duolingo Plus**: {duoplus}\n**Recently active:** {wasactive}\n**Linked Google:** {googleac}\n**Linked Facebook:** {facebookac}\n**Verified Email:** {veryemail}\n**Motivation:** {motivation}\n \n**Last Learned:** {outputlang}\n\n**Account created:** {date_created}', url=f'https://www.duolingo.com/profile/{username}', color=4714574)
     embed.set_author(name=f'{username}',
                      icon_url=f'https:{picture}/xlarge')
-    embed.set_footer(text=f'Duo-Kartoffel v{ver} RC: {rl}')
+    embed.set_footer(text=f'Duo-Kartoffel v{ver}')
     embed.set_timestamp()
     embed.add_embed_field(name='Total XP', value=f'{totalxp}')
     embed.add_embed_field(name='Streak', value=f'{streak} Days', inline='true')
