@@ -14,7 +14,7 @@ def main():
     Json = json.loads(Request.read().decode('utf-8'))
 
     # Version Number, Do not change
-    ver = '1.7.1'
+    ver = '1.7.2'
 
     if len(Json['users']) == 0:
         return print('User Not Found')
@@ -34,27 +34,27 @@ def main():
 
     date_created = datetime.fromtimestamp(date)
 
-    if Json['users'][0]['hasPlus'] == True:
+    if Json['users'][0]['hasPlus']:  # == True ??
         duoplus = 'Yes'
     else:
         duoplus = 'No'
 
-    if Json['users'][0]['hasRecentActivity15'] == True:
+    if Json['users'][0]['hasRecentActivity15']:
         wasactive = 'Yes'
     else:
         wasactive = 'No'
 
-    if Json['users'][0]['hasGoogleId'] == True:
+    if Json['users'][0]['hasGoogleId']:
         googleac = 'Yes'
     else:
         googleac = 'No'
 
-    if Json['users'][0]['hasFacebookId'] == True:
+    if Json['users'][0]['hasFacebookId']:
         facebookac = 'Yes'
     else:
         facebookac = 'No'
 
-    if Json['users'][0]['emailVerified'] == True:
+    if Json['users'][0]['emailVerified']:
         veryemail = 'Yes'
     else:
         veryemail = 'No'
@@ -74,7 +74,10 @@ def main():
         'cy': 'Welsh',
         'el': 'Greek',
         'sw': 'Swahili',
-        'vi': 'Vietnamese'
+        'vi': 'Vietnamese',
+        'zh': 'Chinese',
+        'sv': 'Swedish',
+        'ko': 'Korean'
     }
     outputlang = languages.get(langfromjson, "Unknown")
     print(outputlang)
@@ -93,7 +96,7 @@ def main():
     print('Account created:', date_created)
     print("------------------")
     print('Motivation:', motivation)
-    print('Streak:', streak,'days')
+    print('Streak:', streak, 'days')
     print('Total XP:', totalxp)
     print('Lang Code:', langfromjson)
     print('Current Language:', outputlang)
@@ -112,7 +115,7 @@ def main():
     webhook.add_embed(embed)
     response = webhook.execute()
     print('Hook1', response)
-    secondswebhook(Input, picture)
+    secondswebhook(username, picture)
 
 
 def secondswebhook(username, picture):
@@ -123,18 +126,16 @@ def secondswebhook(username, picture):
         Request = request.urlopen(f'https://www.duolingo.com/2017-06-30/users?username={username}')
         Json = json.loads(Request.read().decode('utf-8'))
 
-        Embed.set_author(name=f'{username}',
-                         icon_url=f'https:{picture}/xlarge')
-
+        Embed.set_author(name=f'{username}', icon_url=f'https:{picture}/xlarge')
 
         for langs in Json['users'][0]['courses']:
             if langs['title']:
-                Embed.add_embed_field(name=langs['title'],
-                                      value=f"XP: {langs['xp']}\nCrowns: {langs['crowns']}")
+                Embed.add_embed_field(name=langs['title'], value=f"XP: {langs['xp']}\nCrowns: {langs['crowns']}")
 
         Webhook.add_embed(Embed)
         response = Webhook.execute()
         print('Hook2', response)
+        print('Done')
 
 
 if __name__ == "__main__":
