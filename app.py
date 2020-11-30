@@ -9,6 +9,10 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 
 def main():
 
+    if webhook_id == 'YOUR WEBHOOK ID':
+        print('Change the config ya dingus')
+        exit(0)
+
     Input = input('User: ')
     Request = request.urlopen(f'https://www.duolingo.com/2017-06-30/users?username={Input}')
     Json = json.loads(Request.read().decode('utf-8'))
